@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Easyui-DataGrid-Choose-Columns</title>
+    <link rel="stylesheet" type="text/css" href="./easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="./easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="./easyui/themes/color.css">
+    <script type="text/javascript" src="./easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="./easyui/jquery.easyui.min.js"></script>
+    <style type="text/css" media="screen">
+        .datagrid{
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <table id="tb"></table>
+    </div>
+
+<script type="text/javascript">
+var data = {"total":10, rows: []}
+for(var i=1; i<=10; i++){
+    data['rows'].push({test1: 'test'+i, test2: 'test'+i, test3: 'test'+i, test4: 'test'+i, test5: 'test'+i, test6: 'test'+i})
+}
+$grid = $('#tb');
+$(function(){
+    $grid.datagrid({
+        title: 'Easyui-DataGrid-Choose-Columns',
+        width: 700,
+        height: 250,
+        fitColumns: true,
+        columns:[[
+                {field:'test1',title:'Item ID',width:80},
+                {field:'test2',title:'Product ID',width:120},
+                {field:'test3',title:'List Price',width:80,align:'right'},
+                {field:'test4',title:'Unit Cost',width:80,align:'right'},
+                {field:'test5',title:'Attribute',width:250},
+                {field:'test6',title:'Status',width:60,align:'center'}
+            ]],
+
+        //触发右击事件
+        onHeaderContextMenu:  function(e, field){
+                e.preventDefault(); // 阻止浏览器捕获右击事件
+                if (!cmenu){
+                    createColumnMenu2();
+                }
+               cmenu.dialog("open");
+               cmenu.window("center");
+            }
+    });
+    $grid.datagrid("loadData", data);
+})
+    
+
+
+var cmenu = null;
+
+function createColumnMenu2(){
+    var fields = $grid.datagrid('getColumnFields');  //获取表格字段
+    var colshtml = []      //复选框代码的数组
+    for(var i=0; i<fields.length; i++){
+        var field = fields[i];
+        var col = $grid.datagrid('getColumnOption', field);
+        let title = col.title.replace(/<[^>]+>/g,"")     //正则 去掉字符串中的代码  根据实际情况用
+        colshtml.push("<label style='display:inline-block; width:130px; height:20px;float:left;line-height:20px;''><input type='checkbox' checked value="+title+" name="+field+">"+title+"</label>");
+    }
+    
+    //html为对话框的html代码
+    var html = '<div id="m_chooseCol" class="easyui-dialog"><div style="clear:both; margin: 20px;">'+colshtml.join('')+'</div>'+
+                    '<div style="clear:both; text-align:center; padding: 20px;">'+
+                        '<a id="okbtn" class="easyui-linkbutton c6" onclick="reShowData()" style="width:65px;margin-right:10px;">确定</a>'+ 
+                        '<a id="cancelbtn" class="easyui-linkbutton" onclick="javascript:$(\'#m_chooseCol\').dialog(\'close\')" style="width:65px">取消</a>'+
+                    '</div>'+
+                '</div>'
+
+    cmenu = $(html).appendTo('body');   //cmenu相当于$('#m_chooseCol')
+    
+    //创建对话框
+    $('#m_chooseCol').dialog({
+        title: '选择列',
+        width: 600,
+        closed: false,
+        cache: false,
+        modal: true
+    })
+    
+    //创建easyUI中的链接按钮 确定和取消
+    $('#okbtn').linkbutton({
+        iconCls: 'icon-ok'
+    });
+    $('#cancelbtn').linkbutton({
+        iconCls: 'icon-cancel'
+    });
+}
+
+//根据选择的列重新加载数据
+function reShowData(){
+    var boxes = $('#m_chooseCol input');
+    $.each(boxes,function(k,v){
+        if(!$(v).prop("checked")){
+            $grid.datagrid('hideColumn', $(v).attr('name'));
+        }else{
+            $grid.datagrid('showColumn', $(v).attr('name'));
+        }
+    })
+    $('#m_chooseCol').dialog("close")
+}
+</script>
+</body>
+</html>
