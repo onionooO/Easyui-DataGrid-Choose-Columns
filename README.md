@@ -7,4 +7,4 @@ easyui官网上，dataGrid的表头右击菜单用于选择显示或隐藏的列
 代码如demo.html
 大概文件中的代码就能实现了，README不能po图，看不了效果图。可以clone下来看看效果，希望对你有帮助。
 
-效果图可前往这里https://blog.csdn.net/sinat_39571186/article/details/79929921看哦。
+效果图可前往这里 https://blog.csdn.net/sinat_39571186/article/details/79929921 看哦。
